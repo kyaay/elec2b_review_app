@@ -31,7 +31,9 @@ class SafeCrackerView extends StatefulWidget {
 
 class _SafeCrackerViewState extends State<SafeCrackerView> {
   List<int> values = [0, 0, 0];
-
+  String combination = "227";
+  String feedback = '';
+  bool isUnlocked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,12 +46,12 @@ class _SafeCrackerViewState extends State<SafeCrackerView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              true ? CupertinoIcons.lock_open : CupertinoIcons.lock,
+              isUnlocked ? CupertinoIcons.lock_open : CupertinoIcons.lock,
               size: 95,
               color: Colors.redAccent,
             ),
             Container(
-              margin: EdgeInsets.only(top: 32),
+              margin: EdgeInsets.symmetric(vertical: 32),
               height: 120,
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -69,10 +71,11 @@ class _SafeCrackerViewState extends State<SafeCrackerView> {
                   ),
               ]),
             ),
+            if (feedback.isNotEmpty) Text(feedback),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 48),
               child: TextButton(
-                onPressed: () {},
+                onPressed: unlockSafe,
                 child: Container(
                   padding: EdgeInsets.all(32),
                   color: Colors.greenAccent,
@@ -84,6 +87,34 @@ class _SafeCrackerViewState extends State<SafeCrackerView> {
         ),
       ),
     );
+  }
+
+  unlockSafe() {
+    if (checkCombination()) {
+      setState(() {
+        isUnlocked = true;
+        feedback = "Yeeeyyy! YOU OPENED ME :D <3";
+      });
+    } else {
+      setState(() {
+        isUnlocked = false;
+        feedback = "Booooo! TRY AGAIN >:(";
+      });
+    }
+  }
+
+  bool checkCombination() {
+    String theCurrentValue = convertValuesToCombarableString(values);
+    bool isUnlocked = (theCurrentValue == combination);
+    return isUnlocked;
+  }
+
+  String convertValuesToCombarableString(List<int> val) {
+    String temp = "";
+    for (int v in val) {
+      temp += "$v";
+    }
+    return temp;
   }
 
   int sumOfAllValues(List<int> list) {
